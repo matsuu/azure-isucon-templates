@@ -6,16 +6,28 @@
       "defaultValue": null,
       "type": "String",
        "metadata": {
-           "description": "ssh public key for isucon user" 
+           "description": "ssh public key for isucon user"
        }
+    },
+    "vmSize": {
+      "defaultValue": "Standard_F4s",
+      "type": "String",
+      "allowedValues": [
+        "Standard_F1s",
+        "Standard_F2s",
+        "Standard_F4s",
+        "Standard_F8s"
+      ],
+      "metadata": {
+           "description": "VM size"
+      }
     }
   },
   "variables": {
     "adminUsername": "isucon",
     "location": "[resourceGroup().location]",
     "commonName": "isucon5qualifier",
-    "storageAccountsName": "[concat(uniqueString(resourceGroup().id), 'storage')]",
-    "vmSize": "Standard_F4"
+    "storageAccountsName": "[concat(uniqueString(resourceGroup().id), 'storage')]"
   },
   "resources": [
     {
@@ -26,7 +38,7 @@
       "tags": {},
       "properties": {
         "hardwareProfile": {
-          "vmSize": "[variables('vmSize')]"
+          "vmSize": "[parameters('vmSize')]"
         },
         "storageProfile": {
           "imageReference": {
@@ -84,7 +96,7 @@
       "tags": {},
       "properties": {
         "hardwareProfile": {
-          "vmSize": "[variables('vmSize')]"
+          "vmSize": "[parameters('vmSize')]"
         },
         "storageProfile": {
           "imageReference": {
