@@ -46,6 +46,10 @@ This template allows you to create a Virtual Machines for ISUCON5 qualifier. Thi
 
 ## FAQ
 
+### Azure管理画面が使いにくい
+
+AzureはCLI周りが充実しておりCLIから起動することも可能です。詳細については[公式サイトのドキュメント](https://azure.microsoft.com/ja-jp/documentation/articles/virtual-machines-linux-cli-deploy-templates/)を参照してください。
+
 ### 検証エラーが発生しました
 
 エラーの詳細に「Operation results in exceeding quota limits of Core」と出ている場合、起動できるVMのコア数上限に引っかかっています。
@@ -56,7 +60,6 @@ This template allows you to create a Virtual Machines for ISUCON5 qualifier. Thi
     azure vm list-usage
 
 詳細は[公式サイトのドキュメント](https://azure.microsoft.com/ja-jp/documentation/articles/resource-manager-common-deployment-errors/)を参照してください。
-
 
 ### サーバへの接続方法がわからない
 
@@ -70,6 +73,12 @@ This template allows you to create a Virtual Machines for ISUCON5 qualifier. Thi
 プロビジョニングの進捗は `/var/log/cloud-init-output.log` で確認が可能です。
 
     tail -f /var/log/cloud-init-output.log
+
+### ベンチマークの実行方法がわからない
+
+ベンチマーク用サーバにisuconユーザでログイン後、ホームディレクトリにあるbench.shでベンチマークを実行できます。
+
+    /home/isucon/bench.sh (チューニング対象サーバのIPアドレス)
 
 ### MySQLへの接続エラーになる
 
