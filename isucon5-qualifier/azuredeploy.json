@@ -212,7 +212,10 @@
         "dnsSettings": {
           "dnsServers": []
         },
-        "enableIPForwarding": false
+        "enableIPForwarding": false,
+        "networkSecurityGroup": {
+          "id": "[concat(resourceId('Microsoft.Network/networkSecurityGroups/', variables('commonName')))]"
+        }
       },
       "resources": [],
       "dependsOn": [
@@ -245,7 +248,10 @@
         "dnsSettings": {
           "dnsServers": []
         },
-        "enableIPForwarding": false
+        "enableIPForwarding": false,
+        "networkSecurityGroup": {
+          "id": "[concat(resourceId('Microsoft.Network/networkSecurityGroups/', variables('commonName')))]"
+        }
       },
       "resources": [],
       "dependsOn": [
