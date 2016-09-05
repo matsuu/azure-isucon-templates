@@ -48,10 +48,10 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "bench-os",
+            "name": "bench",
             "createOption": "FromImage",
             "vhd": {
-              "uri": "[concat('https', '://', variables('storageAccountsName'), '.blob.core.windows.net', '/', variables('commonName'), '/bench-os.vhd')]"
+              "uri": "[concat('https', '://', variables('storageAccountsName'), '.blob.core.windows.net', '/', variables('commonName'), '/bench.vhd')]"
             },
             "caching": "ReadWrite"
           },
@@ -106,55 +106,14 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "image-os",
+            "name": "image",
             "createOption": "FromImage",
             "vhd": {
-              "uri": "[concat('https', '://', variables('storageAccountsName'), '.blob.core.windows.net', '/', variables('commonName'), '/image-os.vhd')]"
+              "uri": "[concat('https', '://', variables('storageAccountsName'), '.blob.core.windows.net', '/', variables('commonName'), '/image.vhd')]"
             },
             "caching": "ReadWrite"
           },
-          "dataDisks": [
-            {
-              "lun": 0,
-              "name": "image-data1",
-              "createOption": "Empty",
-              "vhd": {
-                "uri": "[concat('https', '://', variables('storageAccountsName'), '.blob.core.windows.net', '/', variables('commonName'), '/image-data1.vhd')]"
-              },
-              "caching": "None",
-              "diskSizeGB": 2
-            },
-            {
-              "lun": 1,
-              "name": "image-data2",
-              "createOption": "Empty",
-              "vhd": {
-                "uri": "[concat('https', '://', variables('storageAccountsName'), '.blob.core.windows.net', '/', variables('commonName'), '/image-data2.vhd')]"
-              },
-              "caching": "None",
-              "diskSizeGB": 2
-            },
-            {
-              "lun": 2,
-              "name": "image-data3",
-              "createOption": "Empty",
-              "vhd": {
-                "uri": "[concat('https', '://', variables('storageAccountsName'), '.blob.core.windows.net', '/', variables('commonName'), '/image-data3.vhd')]"
-              },
-              "caching": "None",
-              "diskSizeGB": 2
-            },
-            {
-              "lun": 3,
-              "name": "image-data4",
-              "createOption": "Empty",
-              "vhd": {
-                "uri": "[concat('https', '://', variables('storageAccountsName'), '.blob.core.windows.net', '/', variables('commonName'), '/image-data4.vhd')]"
-              },
-              "caching": "None",
-              "diskSizeGB": 2
-            }
-          ]
+          "dataDisks": []
         },
         "osProfile": {
           "computerName": "image",
@@ -354,8 +313,8 @@
     {
       "type": "Microsoft.Storage/storageAccounts",
       "sku": {
-        "name": "Standard_LRS",
-        "tier": "Standard"
+        "name": "Premium_LRS",
+        "tier": "Premium"
       },
       "kind": "Storage",
       "name": "[variables('storageAccountsName')]",
