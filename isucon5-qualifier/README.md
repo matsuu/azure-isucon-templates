@@ -74,6 +74,12 @@ AzureはCLI周りが充実しておりCLIから起動することも可能です
 
     tail -f /var/log/cloud-init-output.log
 
+### Ansibleによるプロビジョニングでエラーが発生した
+
+Issueを立てて頂ければ幸いです。
+プロビジョニング用のソースは`/mnt`配下にあります。
+プロビジョニングを実行するスクリプトは`/var/lib/cloud/instance/user-data.txt`にあります。
+
 ### ベンチマークの実行方法がわからない
 
 ベンチマーク用サーバにisuconユーザでログイン後、ホームディレクトリにあるbench.shでベンチマークを実行できます。
