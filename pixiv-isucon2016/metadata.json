@@ -1,0 +1,7 @@
+{
+  "itemDisplayName": "Create Pixiv ISUCON 2016 Images",
+  "description": "This template allows you to create a Virtual Machines for Pixiv ISUCON 2016. This template also deploys a Virtual Network, Public IP addresses, Network Interfaces and a Storage Account.",
+  "summary": "Create Virtual Machines for Pixiv ISUCON 2016",
+  "githubUsername": "matsuu",
+  "dateUpdated": "2016-09-07"
+}

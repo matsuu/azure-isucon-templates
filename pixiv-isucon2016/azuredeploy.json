@@ -1,0 +1,325 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "sshPublicKey": {
+      "defaultValue": null,
+      "type": "String",
+       "metadata": {
+           "description": "ssh public key for isucon user"
+       }
+    },
+    "vmSize": {
+      "defaultValue": "Standard_F2s",
+      "type": "String",
+      "allowedValues": [
+        "Standard_F1s",
+        "Standard_F2s",
+        "Standard_F4s",
+        "Standard_F8s"
+      ],
+      "metadata": {
+           "description": "Size of vm"
+      }
+    }
+  },
+  "variables": {
+    "adminUsername": "isucon",
+    "commonName": "pixiv-isucon2016",
+    "imageReference": {
+      "publisher": "Canonical",
+      "offer": "UbuntuServer",
+      "sku": "16.04.0-LTS",
+      "version": "latest"
+    },
+    "location": "[resourceGroup().location]",
+    "storageAccountsName": "[concat(uniqueString(resourceGroup().id), 'storage')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "bench",
+      "apiVersion": "2015-06-15",
+      "location": "[variables('location')]",
+      "tags": {},
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "storageProfile": {
+          "imageReference": "[variables('imageReference')]",
+          "osDisk": {
+            "name": "bench",
+            "createOption": "FromImage",
+            "vhd": {
+              "uri": "[concat('https', '://', variables('storageAccountsName'), '.blob.core.windows.net', '/', variables('commonName'), '/bench.vhd')]"
+            },
+            "caching": "ReadWrite"
+          },
+          "dataDisks": []
+        },
+        "osProfile": {
+          "computerName": "bench",
+          "adminUsername": "[variables('adminUsername')]",
+          "customData": "IyEvYmluL3NoCgpzZXQgLWUKCmV4cG9ydCBERUJJQU5fRlJPTlRFTkQ9bm9uaW50ZXJhY3RpdmUKYXB0LWdldCB1cGRhdGUKYXB0LWdldCAteSBpbnN0YWxsIGFuc2libGUgZ2l0CgpjZCAvbW50CmdpdCBjbG9uZSBodHRwczovL2dpdGh1Yi5jb20vY2F0YXRzdXkvcHJpdmF0ZS1pc3UuZ2l0CigKICBjZCBwcml2YXRlLWlzdS9hbnNpYmxlCiAgUFlUSE9OVU5CVUZGRVJFRD0xIEFOU0lCTEVfRk9SQ0VfQ09MT1I9dHJ1ZSBhbnNpYmxlLXBsYXlib29rIC1pIHByb2R1Y3Rpb24gLS1jb25uZWN0aW9uPWxvY2FsIHNldHVwLWJlbmNoLnltbAopCnJtIC1yZiBwcml2YXRlLWlzdQo=",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": true,
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[concat('/home/', variables('adminUsername'), '/.ssh/authorized_keys')]",
+                  "keyData": "[parameters('sshPublicKey')]"
+                }
+              ]
+            }
+          },
+          "secrets": []
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', 'bench')]"
+            }
+          ]
+        }
+      },
+      "resources": [],
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountsName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', 'bench')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "image",
+      "apiVersion": "2015-06-15",
+      "location": "[variables('location')]",
+      "tags": {},
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "storageProfile": {
+          "imageReference": "[variables('imageReference')]",
+          "osDisk": {
+            "name": "image",
+            "createOption": "FromImage",
+            "vhd": {
+              "uri": "[concat('https', '://', variables('storageAccountsName'), '.blob.core.windows.net', '/', variables('commonName'), '/image.vhd')]"
+            },
+            "caching": "ReadWrite"
+          },
+          "dataDisks": []
+        },
+        "osProfile": {
+          "computerName": "image",
+          "adminUsername": "[variables('adminUsername')]",
+          "customData": "IyEvYmluL3NoCgpzZXQgLWUKCmV4cG9ydCBERUJJQU5fRlJPTlRFTkQ9bm9uaW50ZXJhY3RpdmUKYXB0LWdldCB1cGRhdGUKYXB0LWdldCAteSBpbnN0YWxsIGFuc2libGUgZ2l0CgpjZCAvbW50CmdpdCBjbG9uZSBodHRwczovL2dpdGh1Yi5jb20vY2F0YXRzdXkvcHJpdmF0ZS1pc3UuZ2l0CigKICBjZCBwcml2YXRlLWlzdS9wcm92aXNpb25pbmcKICBzZWQgLWkgLWUgJy9zb3VyY2VzXC5saXN0L2QnIGltYWdlL2Fuc2libGUvMDBfYmFzZS55bWwKICBzZWQgLWkgLWUgJy9hdXRob3JpemVkX2tleXMvZCcgaW1hZ2UvYW5zaWJsZS8wMV91c2VyLnltbAogIHNlZCAtaSAtZSAncy98IG15c3FsIC11IHJvb3QvfCBzdWRvIG15c3FsLycgaW1hZ2UvYW5zaWJsZS8wNl9jcmVhdGVkYi55bWwKICBybSBpbWFnZS9hbnNpYmxlLzA4X2dydWIueW1sCiAgUFlUSE9OVU5CVUZGRVJFRD0xIEFOU0lCTEVfRk9SQ0VfQ09MT1I9dHJ1ZSBhbnNpYmxlLXBsYXlib29rIC1pIGhvc3RzIC0tY29ubmVjdGlvbj1sb2NhbCBpbWFnZS9hbnNpYmxlLyoueW1sCiAgZWNobyAiR1JBTlQgQUxMIE9OIGlzdWNvbnAuKiBUTyBpc3Vjb25AbG9jYWxob3N0IElERU5USUZJRUQgQlkgJ2lzdWNvbic7IiB8IG15c3FsCiAgZWNobyAiSVNVQ09OUF9EQl9VU0VSPWlzdWNvbiIgPj4gL2hvbWUvaXN1Y29uL2Vudi5zaAogIGVjaG8gIklTVUNPTlBfREJfUEFTU1dPUkQ9aXN1Y29uIiA+PiAvaG9tZS9pc3Vjb24vZW52LnNoCiAgc3lzdGVtY3RsIHJlc3RhcnQgaXN1LXJ1Ynkuc2VydmljZQopCnJtIC1yZiBwcml2YXRlLWlzdQo=",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": true,
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[concat('/home/', variables('adminUsername'), '/.ssh/authorized_keys')]",
+                  "keyData": "[parameters('sshPublicKey')]"
+                }
+              ]
+            }
+          },
+          "secrets": []
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', 'image')]"
+            }
+          ]
+        }
+      },
+      "resources": [],
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountsName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', 'image')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "bench",
+      "apiVersion": "2016-03-30",
+      "location": "[variables('location')]",
+      "tags": {},
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "[variables('commonName')]",
+            "properties": {
+              "privateIPAddress": "10.20.16.5",
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses','bench')]"
+              },
+              "subnet": {
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('commonName')), '/subnets/', variables('commonName'))]"
+              }
+            }
+          }
+        ],
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableIPForwarding": false,
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('commonName'))]"
+        }
+      },
+      "resources": [],
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', 'bench')]",
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('commonName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "image",
+      "apiVersion": "2016-03-30",
+      "location": "[variables('location')]",
+      "tags": {},
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "[variables('commonName')]",
+            "properties": {
+              "privateIPAddress": "10.20.16.4",
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'image')]"
+              },
+              "subnet": {
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('commonName')), '/subnets/', variables('commonName'))]"
+              }
+            }
+          }
+        ],
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableIPForwarding": false,
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('commonName'))]"
+        }
+      },
+      "resources": [],
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', 'image')]",
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('commonName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('commonName')]",
+      "apiVersion": "2016-03-30",
+      "location": "[variables('location')]",
+      "tags": {},
+      "properties": {
+        "securityRules": [
+          {
+            "name": "[concat(variables('commonName'), '-ssh')]",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "22",
+              "sourceAddressPrefix": "0.0.0.0/0",
+              "destinationAddressPrefix": "VirtualNetwork",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "[concat(variables('commonName'), '-http')]",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "80",
+              "sourceAddressPrefix": "0.0.0.0/0",
+              "destinationAddressPrefix": "VirtualNetwork",
+              "access": "Allow",
+              "priority": 110,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      },
+      "resources": [],
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "bench",
+      "apiVersion": "2016-03-30",
+      "location": "[variables('location')]",
+      "tags": {},
+      "properties": {
+        "publicIPAllocationMethod": "Static",
+        "idleTimeoutInMinutes": 4
+      },
+      "resources": [],
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "image",
+      "apiVersion": "2016-03-30",
+      "location": "[variables('location')]",
+      "tags": {},
+      "properties": {
+        "publicIPAllocationMethod": "Static",
+        "idleTimeoutInMinutes": 4
+      },
+      "resources": [],
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('commonName')]",
+      "apiVersion": "2016-03-30",
+      "location": "[variables('location')]",
+      "tags": {},
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.20.0.0/16"
+          ]
+        },
+        "dhcpOptions": {
+          "dnsServers": []
+        },
+        "subnets": [
+          {
+            "name": "[variables('commonName')]",
+            "properties": {
+              "addressPrefix": "10.20.16.0/24"
+            }
+          }
+        ]
+      },
+      "resources": [],
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "sku": {
+        "name": "Premium_LRS",
+        "tier": "Premium"
+      },
+      "kind": "Storage",
+      "name": "[variables('storageAccountsName')]",
+      "apiVersion": "2016-01-01",
+      "location": "[variables('location')]",
+      "tags": {},
+      "properties": {},
+      "resources": [],
+      "dependsOn": []
+    }
+  ]
+}
