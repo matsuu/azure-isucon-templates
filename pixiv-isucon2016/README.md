@@ -39,7 +39,7 @@ This template allows you to create a Virtual Machines for Pixiv ISUCON 2016. Thi
 なお、Pixivさん社内で実施された際のサーバスペックは以下のとおりです。
 
 | 種別           | タイプ    | CPUコア数 | メモリ |
-| -------------- | ----------| --------- | ------ |
+| -------------- | --------- | --------- | ------ |
 | 競技者用       | c4.large  |         2 | 3.75GB |
 | ベンチマーカー | c4.xlarge |         4 | 7.50GB |
 
@@ -61,6 +61,7 @@ AzureはCLI周りが充実しておりCLIから起動することも可能です
 なお、Visual Studio Dev Essentialsのサブスクリプションの場合、コア数の上限は合計4個までとなっているようです。Quotaの設定はAzure CLIで確認が可能です。
 
     azure vm list-usage
+    azure quotas show
 
 詳細は[公式サイトのドキュメント](https://azure.microsoft.com/ja-jp/documentation/articles/resource-manager-common-deployment-errors/)を参照してください。
 
@@ -70,12 +71,22 @@ AzureはCLI周りが充実しておりCLIから起動することも可能です
 
     ssh isucon@(パブリックIPアドレス)
 
+### SSH接続ができない
+
+公開鍵の記述が正しくない可能性はないでしょうか。
+
 ### ログインしてみたら中途半端な状態なんだけど？
 
 サーバ起動とデプロイ後にAnsibleによるプロビジョニングが始まります。
 プロビジョニングの進捗は `/var/log/cloud-init-output.log` で確認が可能です。
 
     tail -f /var/log/cloud-init-output.log
+
+### Ansibleによるプロビジョニングでエラーが発生した
+
+Issueを立てて頂ければ幸いです。
+プロビジョニング用のソースは`/mnt`配下にあります。
+プロビジョニングを実行するスクリプトは`/var/lib/cloud/instance/user-data.txt`にあります。
 
 ### ベンチマークの実行方法がわからない
 
