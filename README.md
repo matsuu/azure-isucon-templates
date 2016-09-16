@@ -8,7 +8,7 @@ These templates allows you to create a Virtual Machines for [ISUCON](http://isuc
 * ISUCON2
 * ISUCON3予選
 * ISUCON3決勝
-* ISUCON4予選
+* [ISUCON4予選](https://github.com/matsuu/azure-isucon-templates/tree/master/isucon5-qualifier)
 * ISUCON4決勝
 * [ISUCON5予選](https://github.com/matsuu/azure-isucon-templates/tree/master/isucon5-qualifier)
 * ISUCON5決勝

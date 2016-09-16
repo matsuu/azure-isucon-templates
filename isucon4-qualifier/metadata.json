@@ -1,0 +1,7 @@
+{
+  "itemDisplayName": "Create ISUCON4 Qualifier Images",
+  "description": "This template allows you to create a Virtual Machines for ISUCON4-qualifier. This template also deploys a Virtual Network, Public IP addresses, Network Interfaces and a Storage Account.",
+  "summary": "Create Virtual Machines for ISUCON4-qualifier",
+  "githubUsername": "matsuu",
+  "dateUpdated": "2016-09-16"
+}
